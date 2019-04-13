@@ -11,6 +11,7 @@
     <modules>
         <module>chapter01</module>
         <module>design-pattern</module>
+        <module>spring-sourcecode</module>
     </modules>
 
     <properties>
