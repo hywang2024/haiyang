@@ -28,8 +28,8 @@ public class DemoController {
     @HYRequestMapping("/getName")
     public void getName(HttpServletRequest req, HttpServletResponse resp, @HYRequestParam("name") String name) {
         try {
-            String out = demoService.getName(name);
-            resp.getWriter().write(out);
+            //String out = demoService.getName(name);
+            resp.getWriter().write("/getName");
         } catch (IOException e) {
             e.printStackTrace();
         }

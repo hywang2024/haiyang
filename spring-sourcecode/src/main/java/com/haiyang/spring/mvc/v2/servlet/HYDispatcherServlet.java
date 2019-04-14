@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -225,18 +226,15 @@ public class HYDispatcherServlet extends HttpServlet {
             String url = requestURI.replaceAll(contextPath, "").replaceAll("/+", "/");
             if (!handleMapping.containsKey(url)) {
                 resp.getWriter().write("404 Not Found!!!");
+                return;
             }
 
             Method method = handleMapping.get(url);
-
             //从reqest中拿到url传过来的参数
             Map<String, String[]> params = req.getParameterMap();
-
             //获取方法的形参列表
-            Class<?> [] parameterTypes = method.getParameterTypes();
-
-            Object [] paramValues = new Object[parameterTypes.length];
-
+            Class<?>[] parameterTypes = method.getParameterTypes();
+            Object[] paramValues = new Object[parameterTypes.length];
             for (int i = 0; i < parameterTypes.length; i++) {
                 //不能用instanceof，parameterType它不是实参，而是形参
                 Class<?> parameterType = parameterTypes[i];
@@ -247,17 +245,36 @@ public class HYDispatcherServlet extends HttpServlet {
                     paramValues[i] = resp;
                     continue;
                 } else if (parameterType == String.class) {
-                    HYRequestParam requestParam = parameterType.getAnnotation(HYRequestParam.class);
-                    //todo  获取的requestParam 为什么是null
-                    if (params.containsKey(requestParam.value())) {
-                        for (Map.Entry<String, String[]> entry : params.entrySet()) {
-                            String value = Arrays.toString(entry.getValue()).replaceAll("\\[|\\]", "")
-                                    .replaceAll("\\s", ",");
-                            paramValues[i] = value;
-                        }
+                 /*   if (parameterType.isAnnotationPresent(HYRequestParam.class)) {
+                        HYRequestParam requestParam = parameterType.getAnnotation(HYRequestParam.class);
+                        //todo  获取的requestParam 为什么是null
+                        if (params.containsKey(requestParam.value())) {
+                            for (Map.Entry<String, String[]> entry : params.entrySet()) {
+                                String value = Arrays.toString(entry.getValue()).replaceAll("\\[|\\]", "")
+                                        .replaceAll("\\s", ",");
+                                paramValues[i] = value;
+                            }
 
+                        }
+                    }*/
+
+                    Annotation[][] pa = method.getParameterAnnotations();
+                    for (int j = 0; j < pa.length ; j ++) {
+                        for(Annotation a : pa[j]){
+                            if(a instanceof HYRequestParam){
+                                String paramName = ((HYRequestParam) a).value();
+                                if(params.containsKey(paramName)) {
+                                    for (Map.Entry<String,String[]> param : params.entrySet()){
+                                        String value = Arrays.toString(param.getValue())
+                                                .replaceAll("\\[|\\]","");
+                                        paramValues[i] = value;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
+
             }
             //通过反射拿到method所在class，拿到class之后还是拿到class的名称
             //再调用toLowerFirstCase获得beanName
