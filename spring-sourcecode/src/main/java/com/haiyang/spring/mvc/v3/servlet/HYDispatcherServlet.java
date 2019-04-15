@@ -163,12 +163,13 @@ public class HYDispatcherServlet extends HttpServlet {
             }
             //默认获取所有public方法
             for (Method method : clazz.getMethods()) {
-                if (!clazz.isAnnotationPresent(HYRequestMapping.class)) {
+                if (!method.isAnnotationPresent(HYRequestMapping.class)) {
                     continue;
                 }
-                HYRequestMapping requestMapping = clazz.getAnnotation(HYRequestMapping.class);
+                HYRequestMapping requestMapping = method.getAnnotation(HYRequestMapping.class);
+                // //demo///query
                 String regex = ("/" + baseUrl + "/" + requestMapping.value())
-                        .replaceAll("/+", "/");
+                        .replaceAll("/+","/");
                 Pattern pattern = Pattern.compile(regex);
                 handlerMapping.add(new Handler(pattern, method, entry.getValue()));
                 System.out.println("Mapped :" + pattern + "," + method);
@@ -197,7 +198,7 @@ public class HYDispatcherServlet extends HttpServlet {
                 field.setAccessible(true);
 
                 try {
-                    field.set(beanName, ioc.get(beanName));
+                    field.set(entry.getValue(), ioc.get(beanName));
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
@@ -209,7 +210,7 @@ public class HYDispatcherServlet extends HttpServlet {
 
     private void doInstance() {
         // 将扫描的类，并放入到ioc的容器中
-        if (ioc.isEmpty()) {
+        if (classNames.isEmpty()) {
             return;
         }
         try {

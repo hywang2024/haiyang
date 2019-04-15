@@ -13,7 +13,7 @@ public class LazyDubboCheckSingleton {
     private LazyDubboCheckSingleton() {
     }
 
-    public static LazyDubboCheckSingleton getSingleton() {
+    public static LazyDubboCheckSingleton getInstance() {
         if (null == singleton) {
             synchronized (LazyDubboCheckSingleton.class) {
                 if (null == singleton) {
