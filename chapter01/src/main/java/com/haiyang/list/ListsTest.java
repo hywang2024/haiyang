@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * @ClassName: ListsTest
- * @Description: todo java类作用描述
+ * @Description:
  * @Author: hywang
  * @CreateDate: 2019/1/14 4:09 PM
  * @Version: 1.0
@@ -38,9 +38,15 @@ public class ListsTest {
         });
 
         list1.forEach(var->{
-            System.out.println(var);
+         //   System.out.println(var);
         });
-        System.out.println(list1.size());
+
+        if(list1.contains("153,福林")){
+            System.out.println("1");
+        }else if(list1.contains("143,福林")){
+            System.out.println("2");
+        }
+       // System.out.println(list1.size());
 
     }
 }
