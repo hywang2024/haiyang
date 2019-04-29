@@ -1,6 +1,6 @@
-package com.haiyang.spring.framework.demo.service.impl;
+package com.haiyang.spring.demo.service.impl;
 
-import com.haiyang.spring.framework.demo.service.IDemoService;
+import com.haiyang.spring.demo.service.IDemoService;
 import com.haiyang.spring.framework.annection.HYService;
 
 /**

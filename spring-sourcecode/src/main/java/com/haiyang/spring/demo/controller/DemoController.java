@@ -1,6 +1,6 @@
-package com.haiyang.spring.framework.demo.controller;
+package com.haiyang.spring.demo.controller;
 
-import com.haiyang.spring.framework.demo.service.IDemoService;
+import com.haiyang.spring.demo.service.IDemoService;
 import com.haiyang.spring.framework.annection.HYAutowired;
 import com.haiyang.spring.framework.annection.HYController;
 import com.haiyang.spring.framework.annection.HYRequestMapping;

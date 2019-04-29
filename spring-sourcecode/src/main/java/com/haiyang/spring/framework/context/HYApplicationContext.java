@@ -18,6 +18,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -38,7 +39,7 @@ public class HYApplicationContext extends HYDefaultListableBeanFactory implement
     // 通用的ioc容器
     private Map<String, HYBeanWrapper> factoryBeanInstanceCache = new ConcurrentHashMap<>();
 
-    public HYApplicationContext(String[] configLocations) {
+    public HYApplicationContext(String... configLocations) {
         this.configLocations = configLocations;
         try {
             refresh();
@@ -191,4 +192,12 @@ public class HYApplicationContext extends HYDefaultListableBeanFactory implement
     }
 
 
+
+    public String[] getBeanDefinitionNames() {
+        return this.beanDefinitionMap.keySet().toArray(new  String[this.beanDefinitionMap.size()]);
+    }
+
+    public Properties getConfig(){
+        return this.reader.getConfig();
+    }
 }

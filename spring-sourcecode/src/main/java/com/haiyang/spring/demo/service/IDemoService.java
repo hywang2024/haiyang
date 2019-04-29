@@ -1,4 +1,4 @@
-package com.haiyang.spring.framework.demo.service;
+package com.haiyang.spring.demo.service;
 
 /**
  * @ClassName: IDemoService
