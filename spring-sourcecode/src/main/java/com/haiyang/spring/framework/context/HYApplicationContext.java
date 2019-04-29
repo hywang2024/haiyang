@@ -3,10 +3,14 @@ package com.haiyang.spring.framework.context;
 import com.haiyang.spring.framework.annection.HYAutowired;
 import com.haiyang.spring.framework.annection.HYController;
 import com.haiyang.spring.framework.annection.HYService;
+import com.haiyang.spring.framework.aop.HYAopProxy;
+import com.haiyang.spring.framework.aop.HYJdkDynamicAopProxy;
+import com.haiyang.spring.framework.aop.config.HYAopConfig;
+import com.haiyang.spring.framework.aop.support.HYAdvisedSupport;
+import com.haiyang.spring.framework.beans.HYBeanWrapper;
 import com.haiyang.spring.framework.beans.config.HYBeanDefinition;
 import com.haiyang.spring.framework.beans.config.HYBeanPostProcessor;
 import com.haiyang.spring.framework.beans.support.HYBeanDefinitionReader;
-import com.haiyang.spring.framework.beans.HYBeanWrapper;
 import com.haiyang.spring.framework.beans.support.HYDefaultListableBeanFactory;
 import com.haiyang.spring.framework.core.HYBeanFactory;
 import org.apache.commons.collections4.CollectionUtils;
@@ -117,11 +121,11 @@ public class HYApplicationContext extends HYDefaultListableBeanFactory implement
             }
             filed.setAccessible(true);
             try {
-               if(factoryBeanInstanceCache.get(autoeiredName)==null){
-                   continue;
-               }
-               filed.set(instance,factoryBeanInstanceCache.get(autoeiredName).getWrapperInstance());
-            }catch (Exception e){
+                if (factoryBeanInstanceCache.get(autoeiredName) == null) {
+                    continue;
+                }
+                filed.set(instance, factoryBeanInstanceCache.get(autoeiredName).getWrapperInstance());
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -140,6 +144,17 @@ public class HYApplicationContext extends HYDefaultListableBeanFactory implement
             } else {
                 Class<?> clazz = Class.forName(className);
                 instance = clazz.newInstance();
+
+                //aop
+                HYAopConfig config = instantiateAopConfig(beanDefinition);
+                HYAdvisedSupport support = new HYAdvisedSupport(config);
+                support.setTargetClass(clazz);
+                support.setTarget(instance);
+                //符合PointCut的规则的话，创建代理对象
+                if (support.pointCutMatch()) {
+                    instance = createProxy(support).getProxy();
+                }
+
                 singletonObjects.put(className, instance);
                 singletonObjects.put(beanDefinition.getFactoryBeanName(), instance);
             }
@@ -149,8 +164,31 @@ public class HYApplicationContext extends HYDefaultListableBeanFactory implement
         return instance;
     }
 
+    private HYAopProxy createProxy(HYAdvisedSupport support) {
+        Class<?> targetClass = support.getTargetClass();
+        if (targetClass.getInterfaces().length > 0) {
+            new HYJdkDynamicAopProxy(support);
+        }
+        return new HYJdkDynamicAopProxy(support);
+    }
+
+
     @Override
     public Object getBean(Class<?> beanClass) throws Exception {
         return getBean(beanClass.getName());
     }
+
+
+    private HYAopConfig instantiateAopConfig(HYBeanDefinition beanDefinition) {
+        HYAopConfig config = new HYAopConfig();
+        config.setPointCut(this.beanDefinitionReader.getProperties().getProperty("pointCut"));
+        config.setAspectClass(this.beanDefinitionReader.getProperties().getProperty("aspectClass"));
+        config.setAspectBefore(this.beanDefinitionReader.getProperties().getProperty("aspectBefore"));
+        config.setAspectAfter(this.beanDefinitionReader.getProperties().getProperty("aspectAfter"));
+        config.setAspectAfterThrow(this.beanDefinitionReader.getProperties().getProperty("aspectAfterThrow"));
+        config.setAspectAfterThrowingName(this.beanDefinitionReader.getProperties().getProperty("aspectAfterThrowingName"));
+        return config;
+    }
+
+
 }

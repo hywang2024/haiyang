@@ -112,4 +112,8 @@ public class HYBeanDefinitionReader {
         chars[0] += 32;
         return String.valueOf(chars);
     }
+
+    public Properties getProperties() {
+        return this.properties;
+    }
 }
