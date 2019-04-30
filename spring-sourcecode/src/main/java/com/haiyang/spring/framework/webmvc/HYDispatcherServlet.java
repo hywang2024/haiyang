@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
  * @CreateDate: 2019-04-29 11:59
  * @Version: 1.0
  */
-@Slf4j
+
 public class HYDispatcherServlet extends HttpServlet {
 
     private final String LOACTION = "contextConfigLocation";
@@ -43,9 +43,9 @@ public class HYDispatcherServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        try{
-            this.doDispatch(req,resp);
-        }catch(Exception e){
+        try {
+            this.doDispatch(req, resp);
+        } catch (Exception e) {
             resp.getWriter().write("500 Exception,Details:\r\n" + Arrays.toString(e.getStackTrace()).replaceAll("\\[|\\]", "").replaceAll(",\\s", "\r\n"));
             e.printStackTrace();
 //            new GPModelAndView("500");
@@ -53,12 +53,12 @@ public class HYDispatcherServlet extends HttpServlet {
         }
     }
 
-    private void doDispatch(HttpServletRequest req, HttpServletResponse resp) throws Exception{
+    private void doDispatch(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         //1、通过从request中拿到URL，去匹配一个HandlerMapping
         HYHandlerMapping handler = getHandler(req);
 
-        if(handler == null){
-            processDispatchResult(req,resp,new HYModelAndView("404"));
+        if (handler == null) {
+            processDispatchResult(req, resp, new HYModelAndView("404"));
             return;
         }
 
@@ -66,7 +66,7 @@ public class HYDispatcherServlet extends HttpServlet {
         HYHandlerAdapter ha = getHandlerAdapter(handler);
 
         //3、真正的调用方法,返回ModelAndView存储了要穿页面上值，和页面模板的名称
-        HYModelAndView mv = ha.handle(req,resp,handler);
+        HYModelAndView mv = ha.handle(req, resp, handler);
 
         //这一步才是真正的输出
         processDispatchResult(req, resp, mv);
@@ -75,9 +75,11 @@ public class HYDispatcherServlet extends HttpServlet {
 
     private HYHandlerAdapter getHandlerAdapter(HYHandlerMapping handler) {
 
-        if(this.handleAdapterMap.isEmpty()){return null;}
+        if (this.handleAdapterMap.isEmpty()) {
+            return null;
+        }
         HYHandlerAdapter ha = this.handleAdapterMap.get(handler);
-        if(ha.supports(handler)){
+        if (ha.supports(handler)) {
             return ha;
         }
         return null;
@@ -86,14 +88,18 @@ public class HYDispatcherServlet extends HttpServlet {
     private void processDispatchResult(HttpServletRequest req, HttpServletResponse resp, HYModelAndView modelAndView) throws Exception {
         //把给我的ModleAndView变成一个HTML、OuputStream、json、freemark、veolcity
         //ContextType
-        if(null == modelAndView){return;}
+        if (null == modelAndView) {
+            return;
+        }
 
         //如果ModelAndView不为null，怎么办？
-        if(this.viewResolvers.isEmpty()){return;}
+        if (this.viewResolvers.isEmpty()) {
+            return;
+        }
 
         for (HYViewResolver viewResolver : this.viewResolvers) {
-            HYView view = viewResolver.resolveViewName(modelAndView.getViewName(),null);
-            view.render(modelAndView.getModel(),req,resp);
+            HYView view = viewResolver.resolveViewName(modelAndView.getViewName(), null);
+            view.render(modelAndView.getModel(), req, resp);
             return;
         }
 
@@ -101,20 +107,24 @@ public class HYDispatcherServlet extends HttpServlet {
     }
 
     private HYHandlerMapping getHandler(HttpServletRequest req) {
-        if(this.handleMappings.isEmpty()){ return null; }
+        if (this.handleMappings.isEmpty()) {
+            return null;
+        }
 
         String url = req.getRequestURI();
         String contextPath = req.getContextPath();
         url = url.replace(contextPath, "").replaceAll("/+", "/");
 
         for (HYHandlerMapping handler : this.handleMappings) {
-            try{
+            try {
                 Matcher matcher = handler.getPattern().matcher(url);
                 //如果没有匹配上继续下一个匹配
-                if(!matcher.matches()){ continue; }
+                if (!matcher.matches()) {
+                    continue;
+                }
 
                 return handler;
-            }catch(Exception e){
+            } catch (Exception e) {
                 throw e;
             }
         }
@@ -170,7 +180,7 @@ public class HYDispatcherServlet extends HttpServlet {
 
         File templateRootDir = new File(templateRootPath);
         String[] templates = templateRootDir.list();
-        for (int i = 0; i < templates.length; i ++) {
+        for (int i = 0; i < templates.length; i++) {
             //这里主要是为了兼容多模板，所有模仿Spring用List保存
             //在我写的代码中简化了，其实只有需要一个模板就可以搞定
             //只是为了仿真，所有还是搞了个List
@@ -194,7 +204,7 @@ public class HYDispatcherServlet extends HttpServlet {
             throw new RuntimeException("handleMappings is empty");
         }
         for (HYHandlerMapping handleMapping : handleMappings) {
-            this.handleAdapterMap.put(handleMapping,new HYHandlerAdapter());
+            this.handleAdapterMap.put(handleMapping, new HYHandlerAdapter());
         }
 
     }

@@ -198,6 +198,6 @@ public class HYApplicationContext extends HYDefaultListableBeanFactory implement
     }
 
     public Properties getConfig(){
-        return this.reader.getConfig();
+        return this.beanDefinitionReader.getProperties();
     }
 }
