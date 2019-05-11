@@ -9,4 +9,13 @@
   association是处理一对一或者多对一的关系，外层查询结果集的某列关联内嵌对象的某列
 ### Statement和PreparedStatement的区别？
 * Statement是将完整的sql发送给数据库，并且生成执行计划，没有cache，对于一条数据的执行力会大于PreparedStatement，但是会有sql注入的问题。
- PreparedStatement会将带占位符的sql预编译成有或者无参的存储过程，只预编译一次，生成一次执行计划，采用了cache机制，对于批量操作来说因为只预编译了一次，每次用到直接从cache里面取出sql并且传入变量，所以批量性能和对数据库内存的开销远远小于Statement，并且没有sql注入。
+ PeparedStatement会将带占位符的sql预编译成有或者无参的存储过程，只预编译一次，生成一次执行计划，采用了cache机制，对于批量操作来说因为只预编译了一次，每次用到直接从cache里面取出sql并且传入变量，所以批量性能和对数据库内存的开销远远小于Statement，并且没有sql注入。
+
+### MyBatis里面用到了哪些设计模式？
+* 装饰模式  Cahe、LoggingCache
+* 建造者模式  BaseBuilder、XMLMapperBuilder
+* 工厂方法 SqlSessionFactory
+* 适配器模式 Log、LogFactory
+* 模板方法  BaseExecutor、SimpleExecutor
+* 动态代理 
+* 责任链模式 Interceptor、InterceptorChain
