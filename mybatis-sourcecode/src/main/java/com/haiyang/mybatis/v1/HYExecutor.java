@@ -22,7 +22,7 @@ public class HYExecutor {
             Class.forName("com.mysql.jdbc.Driver");
 
             // 打开连接
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/gp-mybatis", "root", "123456");
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test", "root", "root");
 
             // 执行查询
             stmt = conn.createStatement();

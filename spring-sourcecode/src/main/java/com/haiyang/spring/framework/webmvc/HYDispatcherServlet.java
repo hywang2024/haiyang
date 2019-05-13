@@ -48,7 +48,7 @@ public class HYDispatcherServlet extends HttpServlet {
         } catch (Exception e) {
             resp.getWriter().write("500 Exception,Details:\r\n" + Arrays.toString(e.getStackTrace()).replaceAll("\\[|\\]", "").replaceAll(",\\s", "\r\n"));
             e.printStackTrace();
-//            new GPModelAndView("500");
+//            new ModelAndView("500");
 
         }
     }
