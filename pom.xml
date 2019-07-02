@@ -15,6 +15,7 @@
         <module>spring-orm</module>
         <module>thread</module>
         <module>mybatis-sourcecode</module>
+        <module>netty</module>
     </modules>
 
     <properties>
