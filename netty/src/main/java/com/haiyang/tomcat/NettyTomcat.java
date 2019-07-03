@@ -86,7 +86,7 @@ public class NettyTomcat {
                             // HttpRequestDecoder 解码器
                             client.pipeline().addLast(new HttpRequestDecoder());
                             // 业务逻辑处理
-                            client.pipeline().addLast(new GPTomcatHandler());
+                            client.pipeline().addLast(new TomcatHandler());
                         }
 
                     })
@@ -97,7 +97,7 @@ public class NettyTomcat {
 
             // 启动服务器
             ChannelFuture f = server.bind(port).sync();
-            System.out.println("GP Tomcat 已启动，监听的端口是：" + port);
+            System.out.println("Tomcat 已启动，监听的端口是：" + port);
             f.channel().closeFuture().sync();
         }catch (Exception e){
             e.printStackTrace();
@@ -108,7 +108,7 @@ public class NettyTomcat {
         }
     }
 
-    public class GPTomcatHandler extends ChannelInboundHandlerAdapter {
+    public class TomcatHandler extends ChannelInboundHandlerAdapter {
         @Override
         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
             if (msg instanceof HttpRequest){
